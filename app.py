@@ -1,4 +1,5 @@
 import json
+import os
 import uuid
 from pathlib import Path
 
@@ -13,8 +14,11 @@ from tools import TOOLS, run_tool
 # --- Config ---
 
 SYSTEM_PROMPT = (
-    "You are a helpful assistant. When a question depends on the weather or "
-    "outdoor conditions, call get_weather first, then answer in a sentence."
+    "You are a trip packing assistant. When the user describes a trip, call get_forecast "
+    "for the destination with the trip length, then call build_packing_list with the "
+    "forecast summary and any activities they mention. Use convert_currency for any "
+    "question about money abroad. If the destination or trip length is missing, ask for "
+    "it. Keep answers short: a one-line weather summary, then the list grouped by category."
 )
 MAX_TOOL_ROUNDS = 5
 
@@ -107,4 +111,5 @@ def clear(session_id: str | None = None):
 
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="127.0.0.1", port=8000)
+    # Cloud Run tells the app which port to listen on through $PORT.
+    uvicorn.run(app, host="0.0.0.0", port=int(os.environ.get("PORT", 8000)))
