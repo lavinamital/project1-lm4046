@@ -4,6 +4,8 @@ import json
 
 import requests
 
+from policy_tools import POLICY_TOOL_MAP, POLICY_TOOLS
+
 # All free, no API key.
 WORLD_BANK_URL = "https://api.worldbank.org/v2"
 WITS_URL = "https://wits.worldbank.org/API/V1/SDMX/V21/datasource/tradestats-trade"
@@ -331,6 +333,7 @@ TOOLS = [
             },
         },
     },
+    *POLICY_TOOLS,
 ]
 
 # What the harness runs: tool name -> Python function.
@@ -338,6 +341,7 @@ TOOL_MAP = {
     "get_economy_profile": get_economy_profile,
     "get_trade_partners": get_trade_partners,
     "get_bilateral_relations": get_bilateral_relations,
+    **POLICY_TOOL_MAP,
 }
 
 

@@ -4,31 +4,48 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Nation Brief</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@600;700&display=swap"
+            rel="stylesheet"
+        />
         <style>
             :root {
-                --bg: #f3f4f7;
-                --card: #ffffff;
-                --ink: #14213d;
-                --muted: #6b7280;
-                --line: #dfe3ea;
-                --accent: #1d3a8a;
-                --accent-soft: #eef2fb;
-                --gold: #b7791f;
-                --user: #14213d;
+                --bg: #f2f4f8;
+                --glow-a: rgba(59, 130, 246, 0.16);
+                --glow-b: rgba(234, 179, 8, 0.12);
+                --grid: rgba(15, 23, 42, 0.05);
+                --card: rgba(255, 255, 255, 0.85);
+                --card-solid: #ffffff;
+                --ink: #0f172a;
+                --muted: #64748b;
+                --line: rgba(15, 23, 42, 0.1);
+                --accent: #2563eb;
+                --accent-2: #ca8a04;
+                --bubble: #eef3ff;
+                --user: #0f172a;
                 --user-ink: #ffffff;
+                --cost: #dc2626;
+                --benefit: #16a34a;
             }
             @media (prefers-color-scheme: dark) {
                 :root {
-                    --bg: #0d1220;
-                    --card: #151c2e;
-                    --ink: #e5e7eb;
-                    --muted: #9ca3af;
-                    --line: #263048;
-                    --accent: #8fb0ff;
-                    --accent-soft: #1b2540;
-                    --gold: #f2c46d;
-                    --user: #8fb0ff;
-                    --user-ink: #0d1220;
+                    --bg: #070b16;
+                    --glow-a: rgba(59, 130, 246, 0.22);
+                    --glow-b: rgba(234, 179, 8, 0.1);
+                    --grid: rgba(148, 163, 184, 0.06);
+                    --card: rgba(15, 22, 40, 0.78);
+                    --card-solid: #0f1628;
+                    --ink: #e2e8f0;
+                    --muted: #94a3b8;
+                    --line: rgba(148, 163, 184, 0.16);
+                    --accent: #60a5fa;
+                    --accent-2: #facc15;
+                    --bubble: #131d36;
+                    --user: #2563eb;
+                    --user-ink: #ffffff;
+                    --cost: #f87171;
+                    --benefit: #4ade80;
                 }
             }
             * {
@@ -37,127 +54,285 @@
                 padding: 0;
             }
             body {
-                font-family: system-ui, sans-serif;
-                background: var(--bg);
+                font-family: Inter, system-ui, sans-serif;
                 color: var(--ink);
+                background:
+                    radial-gradient(800px 500px at 10% -10%, var(--glow-a), transparent 60%),
+                    radial-gradient(700px 500px at 100% 0%, var(--glow-b), transparent 60%),
+                    linear-gradient(var(--grid) 1px, transparent 1px) 0 0 / 32px 32px,
+                    linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0 / 32px 32px,
+                    var(--bg);
                 min-height: 100vh;
                 display: flex;
                 justify-content: center;
-                padding: 2rem 1rem;
+                padding: 2rem 1rem 3rem;
             }
             #container {
                 width: 100%;
-                max-width: 760px;
+                max-width: 820px;
                 display: flex;
                 flex-direction: column;
+                gap: 1.25rem;
+            }
+
+            /* Header */
+            header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
                 gap: 1rem;
             }
-            header h1 {
-                font-family: Georgia, "Times New Roman", serif;
-                font-size: 1.9rem;
-                border-bottom: 3px solid var(--gold);
-                display: inline-block;
-                padding-bottom: 0.2rem;
-            }
-            header p {
-                color: var(--muted);
-                margin-top: 0.35rem;
-                line-height: 1.5;
-            }
-            .how {
+            .brand {
                 display: flex;
-                gap: 0.5rem;
-                flex-wrap: wrap;
-                margin-top: 0.75rem;
-                font-size: 0.8rem;
+                align-items: center;
+                gap: 0.8rem;
+            }
+            .logo {
+                width: 44px;
+                height: 44px;
+                flex-shrink: 0;
+                border-radius: 12px;
+                display: grid;
+                place-items: center;
+                font-size: 1.4rem;
+                background: linear-gradient(135deg, var(--accent), var(--accent-2));
+                box-shadow: 0 6px 20px var(--glow-a);
+            }
+            h1 {
+                font-family: "Space Grotesk", sans-serif;
+                font-size: 1.7rem;
+                letter-spacing: -0.02em;
+            }
+            .tagline {
                 color: var(--muted);
+                font-size: 0.9rem;
             }
-            .how span {
+            .header-right {
+                display: flex;
+                gap: 0.8rem;
+                align-items: center;
+            }
+            .live {
+                font-size: 0.75rem;
+                color: var(--muted);
+                display: flex;
+                align-items: center;
+                gap: 0.4rem;
+                white-space: nowrap;
+            }
+            .live::before {
+                content: "";
+                width: 8px;
+                height: 8px;
+                border-radius: 50%;
+                background: var(--benefit);
+                animation: pulse 2s infinite;
+            }
+            @keyframes pulse {
+                0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.5); }
+                70% { box-shadow: 0 0 0 8px rgba(34, 197, 94, 0); }
+                100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+            }
+
+            /* Mode cards */
+            #modes {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 0.9rem;
+            }
+            .mode {
                 background: var(--card);
+                backdrop-filter: blur(10px);
                 border: 1px solid var(--line);
-                border-radius: 999px;
-                padding: 0.25rem 0.7rem;
+                border-radius: 16px;
+                padding: 1rem;
+                display: flex;
+                flex-direction: column;
+                gap: 0.55rem;
             }
+            .mode h2 {
+                font-family: "Space Grotesk", sans-serif;
+                font-size: 1rem;
+            }
+            .mode p {
+                color: var(--muted);
+                font-size: 0.82rem;
+                line-height: 1.45;
+            }
+            .mode .sources {
+                font-size: 0.7rem;
+                color: var(--muted);
+                text-transform: uppercase;
+                letter-spacing: 0.06em;
+            }
+            .example {
+                text-align: left;
+                background: transparent;
+                color: var(--ink);
+                border: 1px solid var(--line);
+                border-radius: 10px;
+                padding: 0.55rem 0.7rem;
+                font: inherit;
+                font-size: 0.84rem;
+                cursor: pointer;
+                transition: border-color 0.15s, transform 0.15s;
+            }
+            .example:hover {
+                border-color: var(--accent);
+                transform: translateY(-1px);
+            }
+            .example::before {
+                content: "→ ";
+                color: var(--accent);
+            }
+
+            /* Chat */
             #chat {
                 background: var(--card);
+                backdrop-filter: blur(10px);
                 border: 1px solid var(--line);
-                border-radius: 14px;
+                border-radius: 18px;
                 display: flex;
                 flex-direction: column;
                 overflow: hidden;
+                box-shadow: 0 20px 50px rgba(2, 6, 23, 0.12);
             }
             #messages {
                 overflow-y: auto;
                 padding: 1.25rem;
                 display: flex;
                 flex-direction: column;
-                gap: 0.9rem;
-                min-height: 380px;
+                gap: 0.85rem;
+                min-height: 340px;
                 max-height: 62vh;
             }
+            .empty {
+                margin: auto;
+                text-align: center;
+                color: var(--muted);
+                font-size: 0.9rem;
+            }
             .msg {
-                line-height: 1.5;
-                max-width: 85%;
-                padding: 0.65rem 0.9rem;
-                border-radius: 12px;
+                line-height: 1.55;
+                max-width: 88%;
+                padding: 0.7rem 0.95rem;
+                border-radius: 14px;
                 white-space: pre-wrap;
+                font-size: 0.95rem;
             }
             .msg.user {
                 align-self: flex-end;
                 background: var(--user);
                 color: var(--user-ink);
+                border-bottom-right-radius: 4px;
             }
             .msg.assistant {
                 align-self: flex-start;
-                background: var(--accent-soft);
+                background: var(--bubble);
+                border: 1px solid var(--line);
+                border-bottom-left-radius: 4px;
             }
-            .msg.loading {
-                color: var(--muted);
+            .typing span {
+                display: inline-block;
+                width: 6px;
+                height: 6px;
+                margin-right: 4px;
+                border-radius: 50%;
+                background: var(--muted);
+                animation: bounce 1.2s infinite;
             }
-            #examples {
-                display: flex;
-                flex-direction: column;
-                gap: 0.5rem;
+            .typing span:nth-child(2) { animation-delay: 0.15s; }
+            .typing span:nth-child(3) { animation-delay: 0.3s; }
+            @keyframes bounce {
+                0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+                30% { transform: translateY(-4px); opacity: 1; }
             }
-            #examples p {
-                color: var(--muted);
-                font-size: 0.85rem;
-            }
-            .example {
-                text-align: left;
-                background: transparent;
-                color: var(--ink);
-                border: 1px dashed var(--line);
-                border-radius: 10px;
-                padding: 0.6rem 0.8rem;
-                font-size: 0.9rem;
-                cursor: pointer;
-            }
-            .example:hover {
-                border-color: var(--accent);
-            }
+
+            /* Tool calls */
             .tool {
                 align-self: flex-start;
-                max-width: 85%;
+                max-width: 88%;
                 font-size: 0.8rem;
                 border: 1px solid var(--line);
-                border-left: 3px solid var(--accent);
-                border-radius: 8px;
-                padding: 0.45rem 0.7rem;
+                border-radius: 10px;
+                padding: 0.4rem 0.7rem;
+                background: var(--card-solid);
             }
             .tool summary {
                 cursor: pointer;
                 color: var(--accent);
                 font-weight: 600;
+                list-style: none;
+            }
+            .tool summary::after {
+                content: " ▸ details";
+                color: var(--muted);
+                font-weight: 400;
+            }
+            .tool[open] summary::after {
+                content: " ▾";
             }
             .tool pre {
                 font-family: ui-monospace, monospace;
-                font-size: 0.75rem;
+                font-size: 0.72rem;
                 color: var(--muted);
                 white-space: pre-wrap;
                 word-break: break-word;
                 margin-top: 0.4rem;
+                max-height: 240px;
+                overflow-y: auto;
             }
+
+            /* Policy impact chart */
+            .impact {
+                align-self: stretch;
+                border: 1px solid var(--line);
+                border-radius: 14px;
+                padding: 0.9rem 1rem;
+                background: var(--card-solid);
+            }
+            .impact .headline {
+                display: flex;
+                justify-content: space-between;
+                align-items: baseline;
+                flex-wrap: wrap;
+                gap: 0.4rem;
+                margin-bottom: 0.7rem;
+            }
+            .impact .big {
+                font-family: "Space Grotesk", sans-serif;
+                font-size: 1.5rem;
+            }
+            .impact .sub {
+                color: var(--muted);
+                font-size: 0.78rem;
+            }
+            .bar-row {
+                display: grid;
+                grid-template-columns: 96px 1fr 120px;
+                align-items: center;
+                gap: 0.6rem;
+                font-size: 0.8rem;
+                margin: 0.3rem 0;
+            }
+            .bar-track {
+                height: 10px;
+                border-radius: 999px;
+                background: var(--line);
+                overflow: hidden;
+            }
+            .bar {
+                height: 100%;
+                border-radius: 999px;
+                transition: width 0.6s ease;
+            }
+            .bar-row .val {
+                text-align: right;
+                color: var(--muted);
+                font-variant-numeric: tabular-nums;
+            }
+
+            /* Input */
             #input-area {
                 display: flex;
                 gap: 0.6rem;
@@ -167,66 +342,109 @@
             #user-input {
                 flex: 1;
                 min-width: 0;
-                padding: 0.7rem 0.9rem;
+                padding: 0.75rem 0.95rem;
                 border: 1px solid var(--line);
-                border-radius: 10px;
-                background: var(--bg);
+                border-radius: 12px;
+                background: var(--card-solid);
                 color: var(--ink);
-                font-size: 1rem;
+                font: inherit;
                 outline: none;
             }
             #user-input:focus {
                 border-color: var(--accent);
+                box-shadow: 0 0 0 3px var(--glow-a);
             }
-            #send-btn {
-                padding: 0.7rem 1.2rem;
-                background: var(--accent);
-                color: var(--card);
+            button.primary {
+                padding: 0.75rem 1.2rem;
                 border: none;
-                border-radius: 10px;
+                border-radius: 12px;
+                font: inherit;
                 font-weight: 600;
+                color: #fff;
+                background: linear-gradient(135deg, #2563eb, #7c3aed);
                 cursor: pointer;
             }
-            #send-btn:disabled {
-                opacity: 0.4;
+            button.primary:disabled {
+                opacity: 0.45;
+            }
+            #new-chat {
+                background: transparent;
+                border: 1px solid var(--line);
+                color: var(--muted);
+                border-radius: 10px;
+                padding: 0.45rem 0.8rem;
+                font: inherit;
+                font-size: 0.8rem;
+                cursor: pointer;
+                white-space: nowrap;
+            }
+            footer {
+                text-align: center;
+                color: var(--muted);
+                font-size: 0.72rem;
+            }
+
+            @media (max-width: 640px) {
+                #modes {
+                    grid-template-columns: 1fr;
+                }
+                .live {
+                    display: none;
+                }
+                .bar-row {
+                    grid-template-columns: 80px 1fr 96px;
+                }
             }
         </style>
     </head>
     <body>
         <div id="container">
             <header>
-                <h1>🌐 Nation Brief</h1>
-                <p>
-                    Ask about any country's economy or how two countries get along. I pull live data
-                    from the World Bank, its trade database and Wikidata: GDP, growth, major
-                    industries, top trade partners, diplomatic ties and shared alliances.
-                </p>
-                <div class="how">
-                    <span>📊 economy profile</span>
-                    <span>🚢 trade partners &amp; exports</span>
-                    <span>🤝 relations between two countries</span>
+                <div class="brand">
+                    <div class="logo">🌐</div>
+                    <div>
+                        <h1>Nation Brief</h1>
+                        <div class="tagline">Economies, alliances and the cost of US policy, from live public data</div>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <span class="live">live data</span>
+                    <button id="new-chat">New chat</button>
                 </div>
             </header>
 
+            <section id="modes">
+                <div class="mode">
+                    <h2>🌍 World Brief</h2>
+                    <p>A country's economy, major industries and trade partners, or how two countries relate.</p>
+                    <div class="sources">World Bank · WITS · Wikidata · Wikipedia</div>
+                    <button class="example">What are Brazil's major industries, and who does it trade with most?</button>
+                    <button class="example">How would you describe relations between Japan and South Korea?</button>
+                </div>
+                <div class="mode">
+                    <h2>🏛️ US Policy Lab</h2>
+                    <p>Propose a tax, tariff or payment. See what the government gains, what each income group pays, and what could follow.</p>
+                    <div class="sources">US Census · Treasury · WITS</div>
+                    <button class="example">What if the US put a 10% tariff on all imports? Who pays?</button>
+                    <button class="example">Raise income taxes 3 points on income over $200k. What's the gain vs. the cost to people?</button>
+                </div>
+            </section>
+
             <div id="chat">
                 <div id="messages">
-                    <div id="examples">
-                        <p>Try one of these, or ask your own:</p>
-                        <button class="example">What are Brazil's major industries, and who does it trade with most?</button>
-                        <button class="example">How would you describe relations between Japan and South Korea?</button>
-                        <button class="example">Compare the economies of Germany and India.</button>
-                    </div>
+                    <div class="empty" id="empty">Pick an example above, or ask your own question.</div>
                 </div>
                 <div id="input-area">
                     <input
                         type="text"
                         id="user-input"
-                        placeholder="e.g. How dependent is Vietnam on trade with China?"
+                        placeholder="e.g. What would a 5% national sales tax cost a typical household?"
                         autocomplete="off"
                     />
-                    <button id="send-btn">Send</button>
+                    <button class="primary" id="send-btn">Send</button>
                 </div>
             </div>
+            <footer>Policy estimates are static: they assume people and prices don't react. Treat them as a starting point.</footer>
         </div>
         <script>
             const messages = document.getElementById("messages");
@@ -239,14 +457,24 @@
                 get_economy_profile: "📊 Economy profile",
                 get_trade_partners: "🚢 Trade partners",
                 get_bilateral_relations: "🤝 Bilateral relations",
+                get_us_household_profile: "🏠 US households (Census)",
+                get_federal_revenue: "🏦 Federal revenue (Treasury)",
+                estimate_policy_impact: "⚖️ Policy impact estimate",
             };
 
-            function addMessage(role, text, isLoading = false) {
+            function addMessage(role, text) {
+                document.getElementById("empty")?.remove();
                 const div = document.createElement("div");
-                div.className = "msg " + role + (isLoading ? " loading" : "");
+                div.className = "msg " + role;
                 div.textContent = text;
                 messages.appendChild(div);
                 messages.scrollTop = messages.scrollHeight;
+                return div;
+            }
+
+            function addTyping() {
+                const div = addMessage("assistant", "");
+                div.innerHTML = '<span class="typing"><span></span><span></span><span></span></span>';
                 return div;
             }
 
@@ -257,21 +485,85 @@
                 const summary = document.createElement("summary");
                 summary.textContent = TOOL_LABELS[call.name] || call.name;
                 const pre = document.createElement("pre");
-                pre.textContent =
-                    call.name + "(" + JSON.stringify(call.args) + ")\n→ " + call.result;
+                pre.textContent = call.name + "(" + JSON.stringify(call.args) + ")\n→ " + call.result;
                 details.append(summary, pre);
                 messages.insertBefore(details, before);
+            }
+
+            function money(n) {
+                return (n < 0 ? "−" : "") + "$" + Math.abs(n).toLocaleString();
+            }
+
+            // Bar chart of cost per household by income group, from estimate_policy_impact
+            function addImpactChart(call, before) {
+                let r;
+                try {
+                    r = JSON.parse(call.result);
+                } catch {
+                    return;
+                }
+                if (!r.cost_by_household_income) return;
+
+                const box = document.createElement("div");
+                box.className = "impact";
+                const change = r.annual_revenue_change_billions;
+                const head = document.createElement("div");
+                head.className = "headline";
+                const big = document.createElement("div");
+                big.className = "big";
+                big.textContent = (change >= 0 ? "+" : "−") + "$" + Math.abs(change).toLocaleString() + "B / yr";
+                big.style.color = change >= 0 ? "var(--accent)" : "var(--cost)";
+                const sub = document.createElement("div");
+                sub.className = "sub";
+                sub.textContent =
+                    (change >= 0 ? "revenue to government" : "cost to government") +
+                    " · " + Math.abs(r.vs_federal_revenue.change_as_pct_of_total) + "% of FY" +
+                    r.vs_federal_revenue.fiscal_year + " federal revenue · " + r.geography;
+                head.append(big, sub);
+                box.append(head);
+
+                const groups = Object.entries(r.cost_by_household_income);
+                const max = Math.max(...groups.map(([, g]) => Math.abs(g.avg_cost_per_household)), 1);
+                for (const [label, g] of groups) {
+                    const row = document.createElement("div");
+                    row.className = "bar-row";
+                    const name = document.createElement("span");
+                    name.textContent = label;
+                    const track = document.createElement("div");
+                    track.className = "bar-track";
+                    const bar = document.createElement("div");
+                    bar.className = "bar";
+                    bar.style.width = "0%";
+                    bar.style.background = g.avg_cost_per_household >= 0 ? "var(--cost)" : "var(--benefit)";
+                    // Two frames so the width transition animates from 0
+                    requestAnimationFrame(() =>
+                        requestAnimationFrame(() => {
+                            bar.style.width = (100 * Math.abs(g.avg_cost_per_household)) / max + "%";
+                        }),
+                    );
+                    track.append(bar);
+                    const val = document.createElement("span");
+                    val.className = "val";
+                    val.textContent = money(g.avg_cost_per_household) + " · " + g.pct_of_income + "%";
+                    row.append(name, track, val);
+                    box.append(row);
+                }
+                const note = document.createElement("div");
+                note.className = "sub";
+                note.style.marginTop = "0.5rem";
+                note.textContent = "Avg. yearly cost per household (red = pays more, green = receives) · % of income";
+                box.append(note);
+                messages.insertBefore(box, before);
             }
 
             async function send(text) {
                 text = (text || userInput.value).trim();
                 if (!text) return;
 
-                document.getElementById("examples")?.remove();
                 userInput.value = "";
                 sendBtn.disabled = true;
                 addMessage("user", text);
-                const loading = addMessage("assistant", "Looking up the data...", true);
+                const loading = addTyping();
 
                 try {
                     const res = await fetch("/chat", {
@@ -283,17 +575,24 @@
                     sessionId = data.session_id;
 
                     // Show each tool the harness ran, above the assistant's answer
-                    for (const call of data.tool_calls || []) addToolCall(call, loading);
+                    for (const call of data.tool_calls || []) {
+                        addToolCall(call, loading);
+                        if (call.name === "estimate_policy_impact") addImpactChart(call, loading);
+                    }
                     loading.textContent = data.response;
                 } catch (e) {
                     loading.textContent = "Error: " + e.message;
                 }
-                loading.classList.remove("loading");
                 messages.scrollTop = messages.scrollHeight;
                 sendBtn.disabled = false;
                 userInput.focus();
             }
 
+            document.getElementById("new-chat").addEventListener("click", async () => {
+                if (sessionId) await fetch("/clear?session_id=" + sessionId, { method: "POST" });
+                sessionId = null;
+                messages.innerHTML = '<div class="empty" id="empty">New conversation. Ask anything.</div>';
+            });
             document.querySelectorAll(".example").forEach((btn) =>
                 btn.addEventListener("click", () => send(btn.textContent)),
             );
