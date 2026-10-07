@@ -192,12 +192,14 @@
                 <h1>🧳 Pack Smart</h1>
                 <p>
                     Tell me where you're going, for how long, and what you'll be doing. I check the
-                    real forecast, build a packing list for it, and convert your spending money.
+                    real forecast, build a packing list for it, check it fits your airline's carry-on limit,
+                    and convert your spending money.
                 </p>
                 <div class="how">
                     <span>☁️ live forecast</span>
                     <span>📝 packing list</span>
                     <span>💱 currency converter</span>
+                    <span>🎒 carry-on weight check</span>
                 </div>
             </header>
 
@@ -207,6 +209,7 @@
                         <p>Try one of these, or ask your own:</p>
                         <button class="example">I'm going to Tokyo for 5 days, mostly sightseeing and nightlife. What should I pack?</button>
                         <button class="example">Packing for a 3-day hiking trip to Denver this weekend.</button>
+                        <button class="example">I'm flying Lufthansa to Berlin for a 4-day business trip. Will everything fit in my carry-on?</button>
                         <button class="example">How much is $300 in euros? I'm heading to Barcelona for a week.</button>
                     </div>
                 </div>
@@ -232,6 +235,7 @@
                 get_forecast: "☁️ Checked the forecast",
                 build_packing_list: "📝 Built a packing list",
                 convert_currency: "💱 Converted currency",
+                check_carry_on: "🎒 Weighed your carry-on",
             };
 
             function addMessage(role, text, isLoading = false) {

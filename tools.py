@@ -159,6 +159,73 @@ def build_packing_list(
     return json.dumps(result)
 
 
+# Rough per-item weights in pounds, matching the items build_packing_list returns.
+ITEM_WEIGHTS_LB = {
+    "tops": 0.4, "pants/bottoms": 1.2, "underwear": 0.1, "socks": 0.1, "pajamas": 0.6,
+    "comfortable walking shoes": 2.0, "warm winter coat": 3.5, "hat": 0.2, "gloves": 0.2,
+    "scarf": 0.3, "light jacket or sweater": 1.2, "shorts": 0.5, "sunscreen": 0.5,
+    "sunglasses": 0.1, "sun hat": 0.3, "umbrella": 0.8, "waterproof jacket": 1.0,
+    "swimsuit": 0.3, "sandals": 1.0, "beach towel": 1.5, "hiking shoes": 2.5,
+    "reusable water bottle": 0.5, "small backpack": 1.0, "formal outfit": 2.0,
+    "laptop and charger": 4.5, "dress shoes": 2.5, "going-out outfit": 1.0,
+    "comfortable dressy shoes": 2.0, "workout clothes": 0.7, "sneakers": 2.0,
+    "snow boots": 4.0, "thermal base layers": 1.0, "ski gloves": 0.5, "phone charger": 0.2,
+    "toothbrush and toiletries": 2.0, "id/passport": 0.1, "medications": 0.3,
+}
+UNKNOWN_ITEM_LB = 1.0
+EMPTY_BAG_LB = 7.0
+KG_PER_LB = 0.4536
+
+# Carry-on weight limits in kg. None = the airline has no carry-on weight limit.
+AIRLINE_CARRY_ON_KG = {
+    "united": None, "delta": None, "american": None, "jetblue": None, "southwest": None,
+    "british airways": 23, "easyjet": 15, "air france": 12, "klm": 12, "lufthansa": 8,
+    "ryanair": 10, "ana": 10, "jal": 10, "emirates": 7, "qantas": 7, "singapore airlines": 7,
+}
+
+
+def check_carry_on(items: list[str], airline: str) -> str:
+    """Estimate a packing list's weight and check it against an airline's carry-on limit."""
+    key = airline.lower().strip()
+    if key not in AIRLINE_CARRY_ON_KG:
+        return json.dumps({
+            "error": f"No carry-on limit on file for '{airline}'. "
+                     f"Known airlines: {list(AIRLINE_CARRY_ON_KG)}. Ask the user which one they fly."
+        })
+
+    weighed, unknown = [], []
+    for item in items:
+        # "4 tops" -> 4 x "tops", "5 pairs of socks" -> 5 x "socks"
+        count, _, name = item.partition(" ")
+        if not count.isdigit():
+            count, name = "1", item
+        name = name.lower().removeprefix("pairs of ").strip()
+        if name not in ITEM_WEIGHTS_LB:
+            unknown.append(item)
+        weighed.append((item, int(count) * ITEM_WEIGHTS_LB.get(name, UNKNOWN_ITEM_LB)))
+
+    total_lb = EMPTY_BAG_LB + sum(lb for _, lb in weighed)
+    total_kg = round(total_lb * KG_PER_LB, 1)
+    limit_kg = AIRLINE_CARRY_ON_KG[key]
+    heaviest = [item for item, _ in sorted(weighed, key=lambda w: -w[1])[:3]]
+
+    result = {
+        "airline": airline,
+        "estimated_kg": total_kg,
+        "estimated_lb": round(total_lb, 1),
+        "limit_kg": limit_kg,
+        "fits": limit_kg is None or total_kg <= limit_kg,
+        "heaviest_items": heaviest,
+        "tip": "Wear the heaviest shoes and jacket on the plane to save weight.",
+        "note": "Estimate includes a 7 lb empty bag. Airlines change limits; confirm on their site.",
+    }
+    if limit_kg is not None and total_kg > limit_kg:
+        result["over_by_kg"] = round(total_kg - limit_kg, 1)
+    if unknown:
+        result["guessed_weights_for"] = unknown
+    return json.dumps(result)
+
+
 # What the model sees: the "set notes" in the screenplay.
 TOOLS = [
     {
@@ -222,6 +289,31 @@ TOOLS = [
             },
         },
     },
+    {
+        "type": "function",
+        "function": {
+            "name": "check_carry_on",
+            "description": (
+                "Estimate the weight of a packing list and check it against an airline's carry-on "
+                "weight limit. Pass the items exactly as build_packing_list returned them."
+            ),
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "items": {
+                        "type": "array",
+                        "items": {"type": "string"},
+                        "description": "Every item from the packing list, e.g. ['4 tops', 'umbrella']",
+                    },
+                    "airline": {
+                        "type": "string",
+                        "description": f"Airline name. Known: {list(AIRLINE_CARRY_ON_KG)}",
+                    },
+                },
+                "required": ["items", "airline"],
+            },
+        },
+    },
 ]
 
 # What the harness runs: tool name -> Python function.
@@ -229,6 +321,7 @@ TOOL_MAP = {
     "get_forecast": get_forecast,
     "convert_currency": convert_currency,
     "build_packing_list": build_packing_list,
+    "check_carry_on": check_carry_on,
 }
 
 
