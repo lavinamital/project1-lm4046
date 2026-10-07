@@ -3,30 +3,32 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Pack Smart</title>
+        <title>Nation Brief</title>
         <style>
             :root {
-                --bg: #f4f1ea;
+                --bg: #f3f4f7;
                 --card: #ffffff;
-                --ink: #1f2a37;
+                --ink: #14213d;
                 --muted: #6b7280;
-                --line: #e5e0d5;
-                --accent: #0f766e;
-                --accent-soft: #e6f4f1;
-                --user: #1f2a37;
+                --line: #dfe3ea;
+                --accent: #1d3a8a;
+                --accent-soft: #eef2fb;
+                --gold: #b7791f;
+                --user: #14213d;
                 --user-ink: #ffffff;
             }
             @media (prefers-color-scheme: dark) {
                 :root {
-                    --bg: #12161c;
-                    --card: #1b2129;
+                    --bg: #0d1220;
+                    --card: #151c2e;
                     --ink: #e5e7eb;
                     --muted: #9ca3af;
-                    --line: #2b333d;
-                    --accent: #2dd4bf;
-                    --accent-soft: #15302d;
-                    --user: #2dd4bf;
-                    --user-ink: #0b1215;
+                    --line: #263048;
+                    --accent: #8fb0ff;
+                    --accent-soft: #1b2540;
+                    --gold: #f2c46d;
+                    --user: #8fb0ff;
+                    --user-ink: #0d1220;
                 }
             }
             * {
@@ -51,7 +53,11 @@
                 gap: 1rem;
             }
             header h1 {
-                font-size: 1.75rem;
+                font-family: Georgia, "Times New Roman", serif;
+                font-size: 1.9rem;
+                border-bottom: 3px solid var(--gold);
+                display: inline-block;
+                padding-bottom: 0.2rem;
             }
             header p {
                 color: var(--muted);
@@ -189,17 +195,16 @@
     <body>
         <div id="container">
             <header>
-                <h1>🧳 Pack Smart</h1>
+                <h1>🌐 Nation Brief</h1>
                 <p>
-                    Tell me where you're going, for how long, and what you'll be doing. I check the
-                    real forecast, build a packing list for it, check it fits your airline's carry-on limit,
-                    and convert your spending money.
+                    Ask about any country's economy or how two countries get along. I pull live data
+                    from the World Bank, its trade database and Wikidata: GDP, growth, major
+                    industries, top trade partners, diplomatic ties and shared alliances.
                 </p>
                 <div class="how">
-                    <span>☁️ live forecast</span>
-                    <span>📝 packing list</span>
-                    <span>💱 currency converter</span>
-                    <span>🎒 carry-on weight check</span>
+                    <span>📊 economy profile</span>
+                    <span>🚢 trade partners &amp; exports</span>
+                    <span>🤝 relations between two countries</span>
                 </div>
             </header>
 
@@ -207,17 +212,16 @@
                 <div id="messages">
                     <div id="examples">
                         <p>Try one of these, or ask your own:</p>
-                        <button class="example">I'm going to Tokyo for 5 days, mostly sightseeing and nightlife. What should I pack?</button>
-                        <button class="example">Packing for a 3-day hiking trip to Denver this weekend.</button>
-                        <button class="example">I'm flying Lufthansa to Berlin for a 4-day business trip. Will everything fit in my carry-on?</button>
-                        <button class="example">How much is $300 in euros? I'm heading to Barcelona for a week.</button>
+                        <button class="example">What are Brazil's major industries, and who does it trade with most?</button>
+                        <button class="example">How would you describe relations between Japan and South Korea?</button>
+                        <button class="example">Compare the economies of Germany and India.</button>
                     </div>
                 </div>
                 <div id="input-area">
                     <input
                         type="text"
                         id="user-input"
-                        placeholder="e.g. 4 days in London for a business trip"
+                        placeholder="e.g. How dependent is Vietnam on trade with China?"
                         autocomplete="off"
                     />
                     <button id="send-btn">Send</button>
@@ -232,10 +236,9 @@
 
             // Friendly labels for each tool in the UI
             const TOOL_LABELS = {
-                get_forecast: "☁️ Checked the forecast",
-                build_packing_list: "📝 Built a packing list",
-                convert_currency: "💱 Converted currency",
-                check_carry_on: "🎒 Weighed your carry-on",
+                get_economy_profile: "📊 Economy profile",
+                get_trade_partners: "🚢 Trade partners",
+                get_bilateral_relations: "🤝 Bilateral relations",
             };
 
             function addMessage(role, text, isLoading = false) {
@@ -268,7 +271,7 @@
                 userInput.value = "";
                 sendBtn.disabled = true;
                 addMessage("user", text);
-                const loading = addMessage("assistant", "Checking...", true);
+                const loading = addMessage("assistant", "Looking up the data...", true);
 
                 try {
                     const res = await fetch("/chat", {

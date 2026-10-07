@@ -1,9 +1,9 @@
-# Pack Smart
+# Nation Brief
 
-A trip packing assistant. Tell it where you're going, for how long, and what you'll be doing.
-It checks the real forecast for your destination, builds a packing list from that weather and
-your activities, checks whether it fits your airline's carry-on weight limit, and converts
-spending money into the local currency.
+A chat agent that explains a country's economy and its relations with other countries.
+Ask what a country's major industries are, who it trades with, or how two countries get along,
+and it pulls live data from the World Bank, the World Bank's trade database (WITS), Wikidata
+and Wikipedia.
 
 Built on the `gemini-web-tool-calling` starter: FastAPI + LiteLLM + Gemini
 (`vertex_ai/gemini-3.5-flash-lite`), with a per-session conversation store and the tool calls
@@ -13,23 +13,24 @@ shown in the UI.
 
 | Tool | What it does | Data |
 | --- | --- | --- |
-| `get_forecast(location, days)` | Daily high, low and rain chance, plus a trip summary | [Open-Meteo](https://open-meteo.com) (external API) |
-| `convert_currency(amount, from_currency, to_currency)` | Converts money at today's rate | [Frankfurter](https://frankfurter.app) (external API) |
-| `build_packing_list(days, lowest_f, highest_f, max_rain_chance, activities)` | Turns trip length, weather and activities into a categorized list | Original logic in `tools.py` |
-| `check_carry_on(items, airline)` | Estimates the list's weight and checks it against the airline's carry-on limit | Original logic: per-item weights and airline limits in `tools.py` |
+| `get_economy_profile(country)` | GDP, growth, GDP per capita, population, total exports and imports, and the share of GDP from agriculture, industry and services | [World Bank API](https://datahelpdesk.worldbank.org/knowledgebase/articles/889392) |
+| `get_trade_partners(country, top_n)` | Top export destinations, top import sources, and top export product groups | [WITS](https://wits.worldbank.org) |
+| `get_bilateral_relations(country_a, country_b)` | Whether two countries have formal diplomatic relations, the international organizations they both belong to, their trade with each other, and the summary of Wikipedia's "A–B relations" article | Wikidata, WITS, Wikipedia |
 
-The agent chains them: `get_forecast` → `build_packing_list` takes the forecast's summary →
-`check_carry_on` takes the finished list.
-Every tool returns errors as JSON that tell the model how to fix the call (unknown city,
-bad currency code, trip too long, unsupported activity).
+`get_bilateral_relations` is the original tool: it combines four sources into one picture of a
+relationship. Each source fails independently, so one outage doesn't hide the rest.
+
+All tools accept common names ("South Korea", "UK", "Russia") or 3-letter codes, and return
+errors as JSON that tell the model how to fix the call (unknown country, same country twice,
+no recent trade data). Trade data lags a few years, so every number comes with its year.
 
 ## Sample queries
 
-1. `I'm going to Tokyo for 5 days, mostly sightseeing and nightlife. What should I pack?`
-2. `Packing for a 3-day hiking trip to Denver this weekend.` then follow up with
-   `What if I add a day at the gym?`. The follow-up reuses the same trip from memory.
-3. `I'm flying Lufthansa to Berlin for a 4-day business trip. Will everything fit in my carry-on?`
-   (uses all of forecast → packing list → carry-on check), then `How much is $300 in euros there?`
+1. `What are Brazil's major industries, and who does it trade with most?`
+   then follow up with `How does it get along with Argentina?`. The follow-up uses memory to
+   know "it" means Brazil.
+2. `How would you describe relations between Japan and South Korea?`
+3. `Compare the economies of Germany and India.`
 
 ## Run locally
 
